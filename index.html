@@ -92,7 +92,7 @@
             font-size: 1.2em;
             font-weight: bold;
             border-radius: 5px;
-            display: none;
+            display: none; /* Keep hidden by default */
         }
         #flag-container strong {
             color: #f15512;
@@ -111,7 +111,7 @@
             box-sizing: border-box;
         }
         .flag-button:hover {
-            background-color: #4cae4c;
+            background-color: #cdeb58;
         }
 
         footer {
@@ -138,12 +138,9 @@
     <div class="main-content-wrapper">
         <div class="flag-box-container">
             <div id="dynamic-message-container">
-                </div>
-
-            <div id="flag-container">
-                Selamat Anda berhasil menemukan flag nya!<br>
-                <strong>TI404{dapet_flag_picobrowser}</strong>
             </div>
+
+            <div id="flag-container"></div>
 
             <button class="flag-button" id="flagButton">Flag</button>
         </div>
@@ -171,12 +168,32 @@
                 dynamicMessageContainer.innerHTML = '';
             }
 
+            // Function to load the flag content dynamically
+            async function loadFlagContent() {
+                try {
+                    const response = await fetch('flag.html'); // Fetch the flag.html file
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.text();
+                    // Extract only the content of the #flag-content div
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const flagContent = doc.getElementById('flag-content').innerHTML;
+                    flagContainerDiv.innerHTML = flagContent;
+                } catch (error) {
+                    console.error('Failed to load flag content:', error);
+                    flagContainerDiv.innerHTML = '<div class="error-message">Failed to load flag. Please try again.</div>';
+                }
+            }
+
             // Fungsi ini hanya menangani tampilan flag/button, tidak menampilkan pesan awal
             function checkUserAgentCondition() {
                 const userAgent = navigator.userAgent;
                 console.log("Current User-Agent:", userAgent);
 
                 if (userAgent.includes(requiredUserAgent)) {
+                    loadFlagContent(); // Load content when User-Agent matches
                     flagContainerDiv.style.display = 'block';
                     flagButton.style.display = 'none';
                     clearMessage();
