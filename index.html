@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My New Website</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f7f7f7;
+        }
+        header {
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        nav button {
+            margin: 0 10px;
+            padding: 8px 18px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 3px;
+        }
+        nav button:first-child {
+            background-color: #4a90e2;
+            color: white;
+            border-color: #4a90e2;
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+        }
+
+        .flag-box-container {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            padding: 40px 60px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            position: relative;
+        }
+
+        /* Kontainer untuk pesan dinamis */
+        #dynamic-message-container {
+            min-height: 50px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Pesan error utama */
+        .error-message {
+            border: 1px solid #ff0000;
+            background-color: #ffebeb;
+            color: #ff0000;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        /* Kontainer untuk flag, awalnya disembunyikan */
+        #flag-container {
+            background-color: #e6ffe6;
+            border: 1px solid #8cdd8c;
+            color: #1a7a1a;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 5px;
+            display: none;
+        }
+        #flag-container strong {
+            color: #f15512;
+        }
+
+        .flag-button {
+            background-color: #f3d773;
+            color: white;
+            padding: 18px 60px;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .flag-button:hover {
+            background-color: #4cae4c;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-top: 1px solid #e0e0e0;
+            margin-top: auto;
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My New Website</h1>
+        <nav>
+            <button>Home</button>
+            <button>Sign In</button>
+            <button>Sign Out</button>
+        </nav>
+    </header>
+
+    <div class="main-content-wrapper">
+        <div class="flag-box-container">
+            <div id="dynamic-message-container">
+                </div>
+
+            <div id="flag-container">
+                Selamat Anda berhasil menemukan flag nya!<br>
+                <strong>TI404{dapet_flag_picobrowser}</strong>
+            </div>
+
+            <button class="flag-button" id="flagButton">Flag</button>
+        </div>
+    </div>
+
+    <footer>
+        © PicoCTF 2019
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicMessageContainer = document.getElementById('dynamic-message-container');
+            const flagContainerDiv = document.getElementById('flag-container');
+            const flagButton = document.getElementById('flagButton');
+
+            const requiredUserAgent = "picobrowser"; // User-Agent yang diharapkan
+
+            // Fungsi untuk menampilkan pesan di dynamicMessageContainer
+            function displayMessage(type, message) {
+                dynamicMessageContainer.innerHTML = `<div class="${type}-message">${message}</div>`;
+                dynamicMessageContainer.querySelector(`.${type}-message`).style.display = 'block';
+            }
+
+            function clearMessage() {
+                dynamicMessageContainer.innerHTML = '';
+            }
+
+            // Fungsi ini hanya menangani tampilan flag/button, tidak menampilkan pesan awal
+            function checkUserAgentCondition() {
+                const userAgent = navigator.userAgent;
+                console.log("Current User-Agent:", userAgent);
+
+                if (userAgent.includes(requiredUserAgent)) {
+                    flagContainerDiv.style.display = 'block';
+                    flagButton.style.display = 'none';
+                    clearMessage();
+                    return true;
+                } else {
+                    flagContainerDiv.style.display = 'none';
+                    flagButton.style.display = 'block';
+                    return false;
+                }
+            }
+
+            // Panggil fungsi saat halaman pertama kali dimuat
+            checkUserAgentCondition();
+
+            // Tambahkan event listener untuk tombol Flag
+            flagButton.addEventListener('click', () => {
+                if (checkUserAgentCondition()) {
+                    // Jika User-Agent sudah cocok, tidak perlu tindakan lebih lanjut di sini
+                    console.log("Flag sudah muncul.");
+                } else {
+                    // Jika User-Agent masih salah setelah klik
+                    // Langsung tampilkan pesan error yang menggabungkan kedua kalimat
+                    displayMessage('error', 'You\'re not picobrowser! Bisakah Anda menemukan sesuatu yang tidak terlihat?');
+                }
+            });
+
+            // Petunjuk di console (tetap ada)
+            console.log("Petunjuk: Halaman ini memiliki rahasia yang tergantung pada 'siapa' Anda. Periksa 'Network conditions' di Developer Tools dan coba ubah identitas Anda.");
+        });
+    </script>
+</body>
+</html>
